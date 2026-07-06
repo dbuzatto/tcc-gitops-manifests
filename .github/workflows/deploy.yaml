@@ -1,0 +1,19 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: aplica os manifestos
+        run: kubectl apply -f app/
+
+      - name: aguarda o rollout
+        run: kubectl rollout status deployment/app-teste --timeout=120s
