@@ -11,11 +11,17 @@ Manifestos usados no experimento do meu TCC: comparação entre entrega contínu
 │   └── service.yaml      # Service ClusterIP na porta 80
 ├── argocd/
 │   └── application.yaml  # Application do ArgoCD (auto-sync + self-heal)
+├── .github/workflows/
+│   └── deploy.yaml       # workflow do modelo push (runner self-hosted)
+├── docs/
+│   └── evidencias/       # registros datados dos marcos do experimento
 ```
 
 ## Como funciona
 
-Este repositório é a fonte de verdade do estado desejado do cluster. No modelo pull, o ArgoCD observa a pasta `app/` e aplica qualquer mudança commitada aqui automaticamente (auto-sync), além de reverter alterações manuais feitas direto no cluster (self-heal). No modelo push, um workflow do GitHub Actions aplica os mesmos manifestos via `kubectl apply` a cada push.
+Este repositório é a fonte de verdade do estado desejado do cluster. No modelo pull, o ArgoCD observa a pasta `app/` e aplica qualquer mudança commitada aqui automaticamente (auto-sync), além de reverter alterações manuais feitas direto no cluster (self-heal). No modelo push, o workflow em `.github/workflows/deploy.yaml` aplica os mesmos manifestos via `kubectl apply` a cada push que altere `app/`, executando em um runner self-hosted na máquina do experimento (os runners da nuvem do GitHub não alcançam o cluster kind local).
+
+Durante as medições os dois mecanismos nunca ficam ativos ao mesmo tempo, para um não interferir nas métricas do outro.
 
 A aplicação de teste é um nginx simples de propósito: o objeto de estudo do TCC é o mecanismo de entrega, não a aplicação.
 
