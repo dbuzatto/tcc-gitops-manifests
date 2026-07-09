@@ -16,13 +16,15 @@ case "$MODELO" in
       echo "  git checkout -b $BRANCH_EXPERIMENTO && git push -u origin $BRANCH_EXPERIMENTO" >&2
       exit 1
     fi
+    alterna_workflow disable
     kubectl apply -f "$REPO_DIR/argocd/application.yaml" >/dev/null
     kubectl patch application "$DEPLOYMENT" -n argocd --type merge \
       -p "{\"spec\":{\"source\":{\"targetRevision\":\"$BRANCH_EXPERIMENTO\"}}}" >/dev/null
-    echo "bateria pull pronta: application apontando para a branch $BRANCH_EXPERIMENTO, runner desligado"
+    echo "bateria pull pronta: application na branch $BRANCH_EXPERIMENTO, workflow desabilitado, runner desligado"
     ;;
   push)
     garante_branch_experimento
+    alterna_workflow enable
     kubectl delete application "$DEPLOYMENT" -n argocd --ignore-not-found >/dev/null
     if ! grep -q "$BRANCH_EXPERIMENTO" "$REPO_DIR/.github/workflows/deploy.yaml"; then
       sed -i "s|branches: \[main\]|branches: [main, $BRANCH_EXPERIMENTO]|" \
