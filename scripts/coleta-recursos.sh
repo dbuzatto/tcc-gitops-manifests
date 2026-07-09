@@ -51,6 +51,7 @@ while (( $(date +%s) < limite )); do
     sleep "$INTERVALO"
     j2=$(jiffies_dos_pids "$pids")
     cpu=$(( (j2 - j1) * 1000 / CLK_TCK / INTERVALO ))
+    (( cpu < 0 )) && cpu=0
     echo "$(date +%s),runner,$cpu,$(memoria_dos_pids "$pids")" >> "$CSV"
   fi
 done
