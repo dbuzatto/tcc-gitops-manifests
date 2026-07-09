@@ -62,6 +62,15 @@ dispara_workflow() {
     -d "{\"ref\":\"$BRANCH_EXPERIMENTO\"}"
 }
 
+# na bateria pull o workflow fica desabilitado para os commits nao enfileirarem jobs
+alterna_workflow() {
+  : "${GITHUB_TOKEN:?defina GITHUB_TOKEN para habilitar/desabilitar o workflow via api}"
+  curl -s -o /dev/null -X PUT \
+    -H "Authorization: Bearer $GITHUB_TOKEN" \
+    -H "Accept: application/vnd.github+json" \
+    "https://api.github.com/repos/$GITHUB_REPO/actions/workflows/deploy.yaml/$1"
+}
+
 garante_branch_experimento() {
   local atual
   atual=$(git -C "$REPO_DIR" rev-parse --abbrev-ref HEAD)
