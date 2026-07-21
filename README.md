@@ -56,3 +56,5 @@ kubectl apply -f argocd/application.yaml
 ```
 
 A partir daí o ArgoCD sincroniza sozinho: qualquer commit na pasta `app/` é aplicado no cluster sem `kubectl apply` manual, e alterações feitas direto no cluster são revertidas pelo self-heal. O acesso ao repositório é anônimo (repo público via HTTPS), então nenhuma credencial de cluster sai do ambiente, que é justamente um dos pontos comparados no experimento.
+
+Esses passos (menos o registro da Application) estão automatizados em `scripts/recria-ambiente.sh`, que destrói e recria o cluster com ArgoCD e metrics-server já instalados. É ele que garante o isolamento entre as baterias: o cluster é recriado do zero entre a bateria pull e a push.
